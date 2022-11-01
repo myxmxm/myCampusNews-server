@@ -55,11 +55,58 @@ const updateNews = async (news, newId) => {
   }
 };
 
+const insertComment = async (comment) => {
+  try {
+    const [rows] = await promisePool.execute('INSERT INTO news_comment (u_id, n_id, comment_content) VALUES (?,?,?)',
+        [comment.userId, comment.newsId, comment.content]);
+      console.log('model insert comment', rows);
+      return rows.insertId;
+  } catch (e) {
+    console.error('model insert comment', e.message);
+  }
+};
+
+const getAllCommentsByNewsId = async (newsId, next) => {
+  try {
+  const [rows] = await promisePool.execute('SELECT * FROM news_comment WHERE n_id = ?', [newsId]);
+  console.log('Get comments by news id result', rows);
+  return rows;
+} catch (e) {
+    console.error('model get comments by news id', e.message);
+    const err = httpError('Sql error', 500);
+    next(err);
+  }
+};
+
+const deleteCommentByCommentId = async (commentId) => {
+  try {
+    const [rows] = await promisePool.execute('DELETE FROM news_comment WHERE comment_id = ?', [commentId]);
+    console.log('model delete comment', rows);
+    return true;
+  } catch (e) {
+    console.error('model delete comment', e.message);
+  }
+};
+
+const updateCommentByCommentId = async (comment, commentId) => {
+  try {
+    const [rows] = await promisePool.execute('UPDATE news_comment SET comment_content = ? WHERE comment_id = ?',
+    [comment, commentId]);
+    return rows.affectedRows === 1;
+  } catch (e) {
+    console.error('model update news comment', e.message);
+  }
+};
+
 
 module.exports = {
     getAllNews,
     getNews,
     insertNews,
     deleteNews,
-    updateNews
+    updateNews,
+    insertComment,
+    getAllCommentsByNewsId,
+    deleteCommentByCommentId,
+    updateCommentByCommentId
   };
