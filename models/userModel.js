@@ -28,8 +28,8 @@ const getUserById = async (userId, next) => {
 const insertUser = async (user) => {
   try {
     const [rows] = await promisePool.execute(
-      "INSERT INTO user (email, full_name, password) VALUES (?,?,?)",
-      [user.email, user.fullName, user.password]
+      "INSERT INTO user (email, full_name, password, avatar_name) VALUES (?,?,?,?)",
+      [user.email, user.fullName, user.password, "unavailable"]
     );
     console.log("model insert user", rows);
     return rows.insertId;
@@ -63,10 +63,23 @@ const updateUserPassword = async (user, UserId) => {
   }
 };
 
+const updateUserAvatar = async (avatar, UserId) => {
+    try {
+      const [rows] = await promisePool.execute(
+        "UPDATE user SET avatar_name = ? WHERE user_id = ?",
+        [avatar, UserId]
+      );
+      return rows.affectedRows === 1;
+    } catch (e) {
+      console.error("model update user password", e.message);
+    }
+  };
+
 module.exports = {
   getAllUsers,
   getUserById,
   insertUser,
   deleteUser,
   updateUserPassword,
+  updateUserAvatar
 };
