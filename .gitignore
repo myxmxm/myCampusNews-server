@@ -496,6 +496,10 @@ Temporary Items
 
 # ignore content of uploads folder
 uploads/*
+
+# ignore content of uploads folder
+avatar/*
+
 # except one (empty) file to have the folder in version control
 !uploads/.gitkeep
-
+!avatar/.gitkeep

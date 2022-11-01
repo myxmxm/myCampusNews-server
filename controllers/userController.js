@@ -1,12 +1,14 @@
 "use strict";
 const { httpError } = require("../utils/errors");
 const { validationResult } = require("express-validator");
+const { makeThumbnail } = require("../utils/resize");
 const {
   getAllUsers,
   getUserById,
   insertUser,
   deleteUser,
   updateUserPassword,
+  updateUserAvatar,
 } = require("../models/userModel");
 
 const user_list_get = async (req, res) => {
@@ -60,10 +62,36 @@ const user_password_update_put = async (req, res) => {
   res.json({ message: `User password updated ${updated}` });
 };
 
+const user_avatar_update_put = async (req, res, next) => {
+  if (!req.file) {
+    const err = httpError("Invalid file", 400);
+    next(err);
+    return;
+  }
+  try {
+    const avatar = await makeThumbnail(req.file.path, req.file.filename);
+
+    if (avatar) {
+      const updated = await updateUserAvatar(
+        req.file.filename,
+        req.params.userId
+      );
+      res.json({ message: `User avatar updated ${updated}` });
+      console.log(`user avatar updated with avatar name ${req.file.filename}`);
+    }
+  } catch (e) {
+    console.log("user_avatar_update_put", e.message);
+    const err = httpError("Invalid file", 400);
+    next(err);
+    return;
+  }
+};
+
 module.exports = {
   user_list_get,
   user_get_by_id,
   user_post,
   user_delete,
   user_password_update_put,
+  user_avatar_update_put,
 };
