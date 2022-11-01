@@ -87,6 +87,15 @@ const user_avatar_update_put = async (req, res, next) => {
   }
 };
 
+const checkToken = (req, res, next) => {
+    console.log('checkToken', req.user);
+    if (!req.user) {
+      next(httpError('token not valid', 400));
+    } else {
+      res.json({ user: req.user });
+    }
+  };
+
 module.exports = {
   user_list_get,
   user_get_by_id,
@@ -94,4 +103,5 @@ module.exports = {
   user_delete,
   user_password_update_put,
   user_avatar_update_put,
+  checkToken
 };

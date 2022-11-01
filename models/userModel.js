@@ -15,12 +15,14 @@ const getAllUsers = async () => {
 const getUserById = async (userId, next) => {
   try {
     const [rows] = await promisePool.execute(
-      "SELECT * FROM user WHERE user_id = ?",[userId]);
+      "SELECT * FROM user WHERE user_id = ?",
+      [userId]
+    );
     console.log("Get by user id result?", rows);
     return rows[0];
   } catch (e) {
     console.error("model get user by id", e.message);
-    const err = httpError('Sql error', 500);
+    const err = httpError("Sql error", 500);
     next(err);
   }
 };
@@ -64,16 +66,29 @@ const updateUserPassword = async (user, UserId) => {
 };
 
 const updateUserAvatar = async (avatar, UserId) => {
-    try {
-      const [rows] = await promisePool.execute(
-        "UPDATE user SET avatar_name = ? WHERE user_id = ?",
-        [avatar, UserId]
-      );
-      return rows.affectedRows === 1;
-    } catch (e) {
-      console.error("model update user password", e.message);
-    }
-  };
+  try {
+    const [rows] = await promisePool.execute(
+      "UPDATE user SET avatar_name = ? WHERE user_id = ?",
+      [avatar, UserId]
+    );
+    return rows.affectedRows === 1;
+  } catch (e) {
+    console.error("model update user password", e.message);
+  }
+};
+
+const getUserLogin = async (params) => {
+  try {
+    console.log(params);
+    const [rows] = await promisePool.execute(
+      "SELECT * FROM user WHERE email = ?;",
+      params
+    );
+    return rows;
+  } catch (e) {
+    console.log("error", e.message);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -81,5 +96,6 @@ module.exports = {
   insertUser,
   deleteUser,
   updateUserPassword,
-  updateUserAvatar
+  updateUserAvatar,
+  getUserLogin
 };
