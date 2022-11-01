@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express')
 const cors = require('cors');
 const newsRoute = require('./routes/newsRoute');
+const userRoute = require('./routes/userRoute');
 const { httpError } = require('./utils/errors');
 const app = express()
 const port = 3000
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static('uploads')); 
 
 app.use('/news', newsRoute);
+app.use('/user', userRoute);
 
 app.use((req, res, next)=>{
   const err = httpError('Not found', 404);
