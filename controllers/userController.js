@@ -88,7 +88,7 @@ const user_avatar_update_put = async (req, res, next) => {
 };
 
 const checkToken = (req, res, next) => {
-    console.log('checkToken', req.user);
+    console.log('checkToken',req.user);
     if (!req.user) {
       next(httpError('token not valid', 400));
     } else {
