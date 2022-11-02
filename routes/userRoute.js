@@ -19,7 +19,7 @@ const {
   user_delete,
   user_password_update_put,
   user_avatar_update_put,
-  checkToken,
+  user_info_get,
 } = require("../controllers/userController");
 
 router
@@ -42,6 +42,6 @@ router
   .route("/password/:userId")
   .put(body("password").matches("(?=.*[A-Z]).{8,}"), user_password_update_put)
 
-router.get('/token', checkToken);
+router.get('/token', user_info_get );
 
 module.exports = router;

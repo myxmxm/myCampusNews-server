@@ -87,8 +87,8 @@ const user_avatar_update_put = async (req, res, next) => {
   }
 };
 
-const checkToken = (req, res, next) => {
-    console.log('checkToken',req.user);
+const user_info_get = (req, res, next) => {
+    console.log('user info',req.user);
     if (!req.user) {
       next(httpError('token not valid', 400));
     } else {
@@ -103,5 +103,5 @@ module.exports = {
   user_delete,
   user_password_update_put,
   user_avatar_update_put,
-  checkToken
+  user_info_get
 };
