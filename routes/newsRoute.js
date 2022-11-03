@@ -21,6 +21,10 @@ const {
   comment_get_by_news_id,
   comment_delete_by_comment_id,
   comment_update_by_comment_id_put,
+  favorite_news_post,
+  user_favorite_news_list_get,
+  favorite_by_id_delete,
+  favorite_by_id_get
 } = require("../controllers/newsController");
 const { body } = require("express-validator");
 
@@ -48,7 +52,20 @@ router.route("/comments/commentid/:commentId")
   .put(body("content").notEmpty(), comment_update_by_comment_id_put)
 
 router
-  .route("/comments/:newsId/:userId")
+  .route("/comments/:newsId")
   .post(body("content").notEmpty(), comment_post)
+
+router
+  .route("/user/favorite")
+  .get(user_favorite_news_list_get)
+
+router
+  .route("/user/favorite/:favoriteId")
+  .delete(favorite_by_id_delete)
+  .get(favorite_by_id_get)
+
+router
+  .route("/favorite/:newsId")
+  .post(favorite_news_post)
 
 module.exports = router;

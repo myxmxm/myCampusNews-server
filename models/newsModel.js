@@ -55,10 +55,10 @@ const updateNews = async (news, newId) => {
   }
 };
 
-const insertComment = async (comment) => {
+const insertComment = async (userId,comment) => {
   try {
     const [rows] = await promisePool.execute('INSERT INTO news_comment (u_id, n_id, comment_content) VALUES (?,?,?)',
-        [comment.userId, comment.newsId, comment.content]);
+        [userId, comment.newsId, comment.content]);
       console.log('model insert comment', rows);
       return rows.insertId;
   } catch (e) {
@@ -98,6 +98,48 @@ const updateCommentByCommentId = async (comment, commentId) => {
   }
 };
 
+const insertFavoriteNews = async (newsId, userId) => {
+  try {
+    const [rows] = await promisePool.execute('INSERT INTO news_favorite(favorite_user_id, favorite_news_id) VALUES (?,?)',
+        [userId, newsId]);
+      console.log('model insert favorite news', rows);
+      return rows.insertId;
+  } catch (e) {
+    console.error('model insert favorite news', e.message);
+  }
+};
+
+const getAllFavoriteNewsOfUser = async (userId) => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM news_favorite WHERE favorite_user_id = ?',[userId]);
+    return rows;
+  } catch (e) {
+    console.error("error", e.message);
+  }
+};
+
+const deleteFavoriteByFavoriteId = async (favoriteId) => {
+  try {
+    const [rows] = await promisePool.execute('DELETE FROM news_favorite WHERE favorite_id = ?', [favoriteId]);
+    console.log('model delete favorite news', rows);
+    return true;
+  } catch (e) {
+    console.error('model delete favirite news', e.message);
+  }
+};
+
+const getFavoriteById = async (favoriteId, next) => {
+  try {
+  const [rows] = await promisePool.execute('SELECT * FROM news_favorite WHERE favorite_id = ?', [favoriteId]);
+  console.log('Get by id result?', rows);
+  return rows[0];
+} catch (e) {
+    console.error('model get news by id', e.message);
+    const err = httpError('Sql error', 500);
+    next(err);
+  }
+};
+
 
 module.exports = {
     getAllNews,
@@ -108,5 +150,9 @@ module.exports = {
     insertComment,
     getAllCommentsByNewsId,
     deleteCommentByCommentId,
-    updateCommentByCommentId
+    updateCommentByCommentId,
+    insertFavoriteNews,
+    getAllFavoriteNewsOfUser,
+    deleteFavoriteByFavoriteId,
+    getFavoriteById
   };
