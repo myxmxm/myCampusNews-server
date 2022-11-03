@@ -32,7 +32,6 @@ const user_get_by_id = async (req, res, next) => {
 };
 
 const user_post = async (req, res, next) => {
-  console.log("add user data", req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error("user_post validation", errors.array());
@@ -40,9 +39,19 @@ const user_post = async (req, res, next) => {
     next(err);
     return;
   }
-  const user = req.body;
-  const uid = await insertUser(user);
-  res.json({ message: `user added with id: ${uid}` });
+  const allUsers = await getAllUsers();
+  var saveUser = true;
+  allUsers.forEach((user) => {
+    if (user.email == req.body.email) {
+      saveUser = false;
+    }
+  });
+  if (saveUser) {
+    const uid = await insertUser(req.body);
+    res.json({ message: `user added with id: ${uid}` });
+  } else {
+    res.json({ message: "This user email already exist" });
+  }
 };
 
 const user_delete = async (req, res) => {
@@ -70,7 +79,6 @@ const user_avatar_update_put = async (req, res, next) => {
   }
   try {
     const avatar = await makeThumbnail(req.file.path, req.file.filename);
-
     if (avatar) {
       const updated = await updateUserAvatar(
         req.file.filename,
@@ -87,6 +95,15 @@ const user_avatar_update_put = async (req, res, next) => {
   }
 };
 
+const user_info_get = (req, res, next) => {
+  console.log("user info", req.user);
+  if (!req.user) {
+    next(httpError("token not valid", 400));
+  } else {
+    res.json({ user: req.user });
+  }
+};
+
 module.exports = {
   user_list_get,
   user_get_by_id,
@@ -94,4 +111,5 @@ module.exports = {
   user_delete,
   user_password_update_put,
   user_avatar_update_put,
+  user_info_get,
 };
