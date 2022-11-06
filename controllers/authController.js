@@ -9,7 +9,7 @@ const login = (req, res, next) => {
     console.log('local params', err, user, info);
     if(err || !user){
         // next(err);
-        next(httpError('username / password incorrect', 400));
+        next(httpError('email / password incorrect', 400));
         return;
       }
       req.login(user, {session: false}, (err)=>{
