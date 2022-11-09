@@ -20,6 +20,7 @@ const {
   user_password_update_put,
   user_avatar_update_put,
   user_info_get,
+  user_info_update_put,
 } = require("../controllers/userController");
 
 router
@@ -32,16 +33,25 @@ router
     user_post
   );
 
+router.route("/avatar").put(upload.single("avatar"), user_avatar_update_put);
+
 router
-  .route("/userid/:userId")
-  .get(user_get_by_id)
-  .delete(user_delete)
-  .put(upload.single("avatar"), user_avatar_update_put);
+  .route("/update")
+  .put(
+    upload.single("avatar"),
+    body("fullName").notEmpty(),
+    body("email").isEmail(),
+    body("contactNumber"),
+    body("employeeNumber"), 
+    body("departmentLocation"),  
+    user_info_update_put);
+
+router.route("/userid/:userId").get(user_get_by_id).delete(user_delete);
 
 router
   .route("/password/:userId")
-  .put(body("password").matches("(?=.*[A-Z]).{8,}"), user_password_update_put)
+  .put(body("password").matches("(?=.*[A-Z]).{8,}"), user_info_update_put);
 
-router.get('/token', user_info_get );
+router.get("/token", user_info_get);
 
 module.exports = router;

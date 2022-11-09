@@ -9,6 +9,7 @@ const {
   deleteUser,
   updateUserPassword,
   updateUserAvatar,
+  updateUserInfo,
 } = require("../models/userModel");
 
 const user_list_get = async (req, res) => {
@@ -82,7 +83,7 @@ const user_avatar_update_put = async (req, res, next) => {
     if (avatar) {
       const updated = await updateUserAvatar(
         req.file.filename,
-        req.params.userId
+        req.user.user_id
       );
       res.json({ message: `User avatar updated ${updated}` });
       console.log(`user avatar updated with avatar name ${req.file.filename}`);
@@ -104,6 +105,46 @@ const user_info_get = (req, res, next) => {
   }
 };
 
+const user_info_update_put = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error("user_post validation", errors.array());
+    const err = httpError("data not valid", 400);
+    next(err);
+    return;
+  }
+  if (!req.file) {
+    const err = httpError("Invalid file", 400);
+    next(err);
+    return;
+  }
+  const allUsers = await getAllUsers();
+  var saveUser = true;
+  allUsers.forEach((user) => {
+    if (user.email == req.body.email) {
+      saveUser = false;
+    }
+  });
+  try {
+    const avatar = await makeThumbnail(req.file.path, req.file.filename);
+    if (avatar && saveUser) {
+      const updated = await updateUserInfo(
+        req.body,
+        req.file.filename,
+        req.user.user_id
+      );
+      res.json({ message: `User info updated ${updated}` });
+    }else {
+      res.json({ message: "This user email already exist" });
+    }
+  } catch (e) {
+    console.log("user_info_update_put", e.message);
+    const err = httpError("Invalid file", 400);
+    next(err);
+    return;
+  }
+};
+
 module.exports = {
   user_list_get,
   user_get_by_id,
@@ -112,4 +153,5 @@ module.exports = {
   user_password_update_put,
   user_avatar_update_put,
   user_info_get,
+  user_info_update_put,
 };

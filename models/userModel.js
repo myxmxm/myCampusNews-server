@@ -90,6 +90,18 @@ const getUserLogin = async (params) => {
   }
 };
 
+const updateUserInfo = async (user, avatar, UserId) => {
+  try {
+    const [rows] = await promisePool.execute(
+      "UPDATE user SET email = ?, full_name = ?, contact_n = ?, employee_n = ?, department_l = ?, avatar_name = ? WHERE user_id = ?",
+      [user.email, user.fullName, user.contactNumber, user.employeeNumber, user.departmentLocation, avatar, UserId]
+    );
+    return rows.affectedRows === 1;
+  } catch (e) {
+    console.error("model update user info", e.message);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -97,5 +109,6 @@ module.exports = {
   deleteUser,
   updateUserPassword,
   updateUserAvatar,
-  getUserLogin
+  getUserLogin,
+  updateUserInfo
 };
