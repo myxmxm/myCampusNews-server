@@ -134,7 +134,7 @@ const user_info_update_put = async (req, res, next) => {
         req.file.filename,
         req.user.user_id
       );
-      res.json({ message: `User info updated ${updated}` });
+      res.json({ message: `User info updated` });
     }else {
       res.json({ message: "This user email already exist" });
     }
