@@ -119,9 +119,10 @@ const user_info_update_put = async (req, res, next) => {
     return;
   }
   const allUsers = await getAllUsers();
+  const userById = await getUserById(req.user.user_id);
   var saveUser = true;
   allUsers.forEach((user) => {
-    if (req.user.email != req.body.email && user.email == req.body.email) {
+    if (userById.email != req.body.email && user.email == req.body.email) {
       saveUser = false;
     }
   });
