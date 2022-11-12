@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const {
   getAllNews,
   getNews,
@@ -13,17 +13,17 @@ const {
   getAllFavoriteNewsOfUser,
   deleteFavoriteByFavoriteId,
   getFavoriteById,
-} = require("../models/newsModel");
-const { httpError } = require("../utils/errors");
-const { validationResult } = require("express-validator");
+} = require('../models/newsModel');
+const { httpError } = require('../utils/errors');
+const { validationResult } = require('express-validator');
 
 const news_list_get = async (req, res) => {
   const news = await getAllNews();
-  console.log("all news", news);
+  console.log('all news', news);
   if (news.length > 0) {
     res.json(news);
   } else {
-    const err = httpError("News not found", 404);
+    const err = httpError('News not found', 404);
   }
 };
 
@@ -40,31 +40,31 @@ const news_get = async (req, res, next) => {
 const news_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("news_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('news_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
 
-  console.log("add news data", req.body);
-  console.log("news photo name", req.file);
+  console.log('add news data', req.body);
+  console.log('news photo name', req.file);
 
   if (!req.file) {
-    const err = httpError("Invalid file", 400);
+    const err = httpError('Invalid file', 400);
     next(err);
     return;
   }
   const news = req.body;
   news.photoName = req.file.filename;
   const id = await insertNews(news);
-  res.json({ message: `news added with id: ${id}` });
+  res.json({ message: `news added with id: ${id}`, status: 200 });
 };
 
 const news_delete = async (req, res, next) => {
   await deleteNews(req.params.newsId, next);
   let id = req.params.newsId;
   if (!id) {
-    const err = httpError("Fail to delete news", 400);
+    const err = httpError('Fail to delete news', 400);
     next(err);
     return;
   }
@@ -74,8 +74,8 @@ const news_delete = async (req, res, next) => {
 const news_update_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("news_update_put validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('news_update_put validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -88,13 +88,13 @@ const comment_post = async (req, res, next) => {
   console.log(`nid:${req.params.newsId} and uid: ${req.params.userId}`);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("comment_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('comment_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
 
-  console.log("add comment data", req.body);
+  console.log('add comment data', req.body);
   const comment = req.params;
   comment.content = req.body.content;
   const id = await insertComment(req.user.user_id, comment);
@@ -106,7 +106,7 @@ const comment_get_by_news_id = async (req, res, next) => {
   if (comments.length > 0) {
     res.json(comments);
   } else {
-    const err = httpError("comments not found", 404);
+    const err = httpError('comments not found', 404);
     next(err);
   }
 };
@@ -115,7 +115,7 @@ const comment_delete_by_comment_id = async (req, res, next) => {
   await deleteCommentByCommentId(req.params.commentId, next);
   let id = req.params.commentId;
   if (!id) {
-    const err = httpError("Fail to delete comment", 400);
+    const err = httpError('Fail to delete comment', 400);
     next(err);
     return;
   }
@@ -126,10 +126,10 @@ const comment_update_by_comment_id_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error(
-      "comment_by_comment_id_update_put validation",
+      'comment_by_comment_id_update_put validation',
       errors.array()
     );
-    const err = httpError("data not valid", 400);
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -163,7 +163,7 @@ const user_favorite_news_list_get = async (req, res) => {
   if (favoriteNews.length > 0) {
     res.json(favoriteNews);
   } else {
-    const err = httpError("Favorite news not found", 404);
+    const err = httpError('Favorite news not found', 404);
   }
 };
 
@@ -172,7 +172,7 @@ const favorite_by_id_delete = async (req, res) => {
   if (req.user.user_id == favorite.favorite_user_id || req.user.role == 0) {
     await deleteFavoriteByFavoriteId(req.params.favoriteId);
     res.json({ message: `favorite id ${req.params.favoriteId} deleted` });
-  }else{
+  } else {
     res.json({ message: `Unauthorized deletion` });
   }
 };
