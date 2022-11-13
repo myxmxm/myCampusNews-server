@@ -49,8 +49,8 @@ router
 router.route("/userid/:userId").get(user_get_by_id).delete(user_delete);
 
 router
-  .route("/password/:userId")
-  .put(body("password").matches("(?=.*[A-Z]).{8,}"), user_info_update_put);
+  .route("/password")
+  .put(body("password").matches("(?=.*[A-Z]).{8,}"), user_password_update_put);
 
 router.get("/token", user_info_get);
 

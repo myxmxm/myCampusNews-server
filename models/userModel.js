@@ -92,6 +92,7 @@ const getUserLogin = async (params) => {
 
 const updateUserInfo = async (user, avatar, UserId) => {
   try {
+    avatar = avatar ? avatar : "unavailable"
     const [rows] = await promisePool.execute(
       "UPDATE user SET email = ?, full_name = ?, contact_n = ?, employee_n = ?, department_l = ?, avatar_name = ? WHERE user_id = ?",
       [user.email, user.fullName, user.contactNumber, user.employeeNumber, user.departmentLocation, avatar, UserId]

@@ -28,7 +28,6 @@ const user_get_by_id = async (req, res, next) => {
     next(err);
     return;
   }
-  delete user.password;
   res.json(user);
 };
 
@@ -68,7 +67,7 @@ const user_password_update_put = async (req, res) => {
     next(err);
     return;
   }
-  const updated = await updateUserPassword(req.body, req.params.userId);
+  const updated = await updateUserPassword(req.body, req.user.user_id);
   res.json({ message: `User password updated ${updated}` });
 };
 
