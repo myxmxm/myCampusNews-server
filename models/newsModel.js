@@ -120,7 +120,7 @@ const getAllFavoriteNewsOfUser = async (userId) => {
 
 const deleteFavoriteByFavoriteId = async (favoriteId) => {
   try {
-    const [rows] = await promisePool.execute('DELETE FROM news_favorite WHERE favorite_id = ?', [favoriteId]);
+    const [rows] = await promisePool.execute('DELETE FROM news_favorite WHERE favorite_news_id = ?', [favoriteId]);
     console.log('model delete favorite news', rows);
     return true;
   } catch (e) {
