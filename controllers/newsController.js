@@ -151,7 +151,7 @@ const favorite_news_post = async (req, res) => {
   });
   if (saveFavorite) {
     const id = await insertFavoriteNews(req.params.newsId, req.user.user_id);
-    res.json({ message: `news favorite added with id: ${id}`, status: 200 });
+    res.json({ message: `This news has been added to your favorite list`, status: 200 });
   } else {
     res.json({ message: `This news is already in your favorite list`, status: 409 });
   }
@@ -169,7 +169,7 @@ const user_favorite_news_list_get = async (req, res) => {
 
 const favorite_by_id_delete = async (req, res) => {
     await deleteFavoriteByFavoriteId(req.params.favoriteId);
-    res.json({ message: `This news has removed from your favorite list`, status: 200 });
+    res.json({ message: `This news has been removed from your favorite list`, status: 200 });
 };
 
 const favorite_by_id_get = async (req, res, next) => {
