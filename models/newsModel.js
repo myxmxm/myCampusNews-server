@@ -128,9 +128,9 @@ const deleteFavoriteByFavoriteId = async (favoriteId) => {
   }
 };
 
-const getFavoriteById = async (favoriteId, next) => {
+const getFavoriteById = async (favoriteId, userId, next) => {
   try {
-  const [rows] = await promisePool.execute('SELECT * FROM news_favorite WHERE favorite_id = ?', [favoriteId]);
+  const [rows] = await promisePool.execute('SELECT * FROM news_favorite WHERE favorite_news_id = ? AND favorite_user_id = ?', [favoriteId,userId]);
   console.log('Get by id result?', rows);
   return rows[0];
 } catch (e) {

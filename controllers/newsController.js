@@ -173,16 +173,9 @@ const favorite_by_id_delete = async (req, res) => {
 };
 
 const favorite_by_id_get = async (req, res, next) => {
-  const favorite = await getFavoriteById(req.params.favoriteId);
-  if (!favorite) {
-    const err = httpError(
-      `Favorite not found by id ${req.params.favoriteId}`,
-      404
-    );
-    next(err);
-    return;
-  }
-  res.json(favorite);
+  const favorite = await getFavoriteById(req.params.favoriteId, req.user.user_id);
+  console.log("favorite by idd", favorite);
+  favorite ? res.json({ favorite: favorite, status: 200 }) : res.json({ message: `Favorite news not found`, status: 409 })
 };
 
 module.exports = {
