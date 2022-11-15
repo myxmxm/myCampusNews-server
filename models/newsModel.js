@@ -163,7 +163,7 @@ const deleteLikeByLikeId = async (LikeId, userId) => {
 
 const getNumberOfLikeByNewsId = async (newsId, next) => {
   try {
-  const [rows] = await promisePool.execute('SELECT COUNT(like_id) FROM news_like WHERE n_id = ?', [newsId]);
+  const [rows] = await promisePool.execute('SELECT COUNT(like_id) as "like" FROM news_like WHERE n_id = ?', [newsId]);
   console.log('Get by id result?', rows);
   return rows[0];
 } catch (e) {
