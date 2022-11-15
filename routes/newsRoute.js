@@ -27,7 +27,8 @@ const {
   favorite_by_id_get,
   like_news_post,
   like_by_id_delete,
-  liked_number_of_news_get
+  liked_number_of_news_get,
+  user_like_of_news_get
 } = require("../controllers/newsController");
 const { body } = require("express-validator");
 
@@ -71,6 +72,10 @@ router
 router
   .route("/favorite/:newsId")
   .post(favorite_news_post)
+
+router
+  .route("/like/:newsId")
+  .get(user_like_of_news_get)
 
 router
   .route("/user/like/:newsId")

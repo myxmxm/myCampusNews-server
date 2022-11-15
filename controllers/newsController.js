@@ -17,6 +17,7 @@ const {
   insertLikeNews,
   deleteLikeByLikeId,
   getNumberOfLikeByNewsId,
+  getUserLikeOfOneNews,
 } = require('../models/newsModel');
 const { httpError } = require('../utils/errors');
 const { validationResult } = require('express-validator');
@@ -209,6 +210,15 @@ const liked_number_of_news_get = async (req, res) => {
   res.json(likedListOfNews);
 };
 
+const user_like_of_news_get = async (req, res) => {
+  const like = await getUserLikeOfOneNews(req.params.newsId,req.user.user_id);
+  if (like.length > 0) {
+    res.json(like);
+  } else {
+    res.json({ message: `User like not found`, status: 409 });
+  }
+};
+
 module.exports = {
   news_list_get,
   news_get,
@@ -225,5 +235,6 @@ module.exports = {
   favorite_by_id_get,
   like_news_post,
   like_by_id_delete,
-  liked_number_of_news_get
+  liked_number_of_news_get,
+  user_like_of_news_get
 };

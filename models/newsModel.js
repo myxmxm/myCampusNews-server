@@ -182,6 +182,15 @@ const getAllLikedNewsOfUser = async (userId) => {
   }
 };
 
+const getUserLikeOfOneNews = async (newsId,userId) => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM news_like WHERE n_id = ? AND u_id =?',[newsId,userId]);
+    return rows;
+  } catch (e) {
+    console.error("error", e.message);
+  }
+};
+
 
 module.exports = {
     getAllNews,
@@ -200,5 +209,6 @@ module.exports = {
     insertLikeNews,
     deleteLikeByLikeId,
     getNumberOfLikeByNewsId,
-    getAllLikedNewsOfUser
+    getAllLikedNewsOfUser,
+    getUserLikeOfOneNews
   };
