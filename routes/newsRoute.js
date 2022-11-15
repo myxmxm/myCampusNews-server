@@ -24,7 +24,10 @@ const {
   favorite_news_post,
   user_favorite_news_list_get,
   favorite_by_id_delete,
-  favorite_by_id_get
+  favorite_by_id_get,
+  like_news_post,
+  like_by_id_delete,
+  liked_number_of_news_get
 } = require("../controllers/newsController");
 const { body } = require("express-validator");
 
@@ -34,6 +37,7 @@ router
   .post(
     upload.single("newsPhoto"),
     body("title").notEmpty(),
+    body("op").notEmpty(),
     body("content").notEmpty(),
     news_post
   );
@@ -67,5 +71,11 @@ router
 router
   .route("/favorite/:newsId")
   .post(favorite_news_post)
+
+router
+  .route("/user/like/:newsId")
+  .post(like_news_post)
+  .delete(like_by_id_delete)
+  .get(liked_number_of_news_get)
 
 module.exports = router;

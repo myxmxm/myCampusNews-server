@@ -26,8 +26,8 @@ const getNews = async (newsId, next) => {
 
 const insertNews = async (news) => {
   try {
-    const [rows] = await promisePool.execute('INSERT INTO news (news_title, news_content, photoName) VALUES (?,?,?)',
-        [news.title, news.content, news.photoName]);
+    const [rows] = await promisePool.execute('INSERT INTO news (news_title, news_op, news_content, photoName) VALUES (?,?,?,?)',
+        [news.title, news.op, news.content, news.photoName]);
       console.log('model insert news', rows);
       return rows.insertId;
   } catch (e) {
@@ -140,6 +140,48 @@ const getFavoriteById = async (favoriteId, userId, next) => {
   }
 };
 
+const insertLikeNews = async (newsId, userId) => {
+  try {
+    const [rows] = await promisePool.execute('INSERT INTO news_like(u_id, n_id) VALUES (?,?)',
+        [userId, newsId]);
+      console.log('model insert like news', rows);
+      return rows.insertId;
+  } catch (e) {
+    console.error('model insert like news', e.message);
+  }
+};
+
+const deleteLikeByLikeId = async (LikeId, userId) => {
+  try {
+    const [rows] = await promisePool.execute('DELETE FROM news_like WHERE n_id = ? AND u_id = ?', [LikeId,userId]);
+    console.log('model delete like news', rows);
+    return true;
+  } catch (e) {
+    console.error('model delete like news', e.message);
+  }
+};
+
+const getNumberOfLikeByNewsId = async (newsId, next) => {
+  try {
+  const [rows] = await promisePool.execute('SELECT COUNT(like_id) FROM news_like WHERE n_id = ?', [newsId]);
+  console.log('Get by id result?', rows);
+  return rows[0];
+} catch (e) {
+    console.error('model get liked by id', e.message);
+    const err = httpError('Sql error', 500);
+    next(err);
+  }
+};
+
+const getAllLikedNewsOfUser = async (userId) => {
+  try {
+    const [rows] = await promisePool.query('SELECT * FROM news_like WHERE u_id = ?',[userId]);
+    return rows;
+  } catch (e) {
+    console.error("error", e.message);
+  }
+};
+
 
 module.exports = {
     getAllNews,
@@ -154,5 +196,9 @@ module.exports = {
     insertFavoriteNews,
     getAllFavoriteNewsOfUser,
     deleteFavoriteByFavoriteId,
-    getFavoriteById
+    getFavoriteById,
+    insertLikeNews,
+    deleteLikeByLikeId,
+    getNumberOfLikeByNewsId,
+    getAllLikedNewsOfUser
   };
