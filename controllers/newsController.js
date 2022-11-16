@@ -18,6 +18,8 @@ const {
   deleteLikeByLikeId,
   getNumberOfLikeByNewsId,
   getUserLikeOfOneNews,
+  getAllNewsViewsById,
+  insertNewsView,
 } = require('../models/newsModel');
 const { httpError } = require('../utils/errors');
 const { validationResult } = require('express-validator');
@@ -156,9 +158,15 @@ const favorite_news_post = async (req, res) => {
   });
   if (saveFavorite) {
     const id = await insertFavoriteNews(req.params.newsId, req.user.user_id);
-    res.json({ message: `This news has been added to your favorite list`, status: 200 });
+    res.json({
+      message: `This news has been added to your favorite list`,
+      status: 200,
+    });
   } else {
-    res.json({ message: `This news is already in your favorite list`, status: 409 });
+    res.json({
+      message: `This news is already in your favorite list`,
+      status: 409,
+    });
   }
 };
 
@@ -173,18 +181,26 @@ const user_favorite_news_list_get = async (req, res) => {
 };
 
 const favorite_by_id_delete = async (req, res) => {
-    await deleteFavoriteByFavoriteId(req.params.favoriteId);
-    res.json({ message: `This news has been removed from your favorite list`, status: 200 });
+  await deleteFavoriteByFavoriteId(req.params.favoriteId);
+  res.json({
+    message: `This news has been removed from your favorite list`,
+    status: 200,
+  });
 };
 
 const favorite_by_id_get = async (req, res, next) => {
-  const favorite = await getFavoriteById(req.params.favoriteId, req.user.user_id);
-  console.log("favorite by idd", favorite);
-  favorite ? res.json({ favorite: favorite, status: 200 }) : res.json({ message: `Favorite news not found`, status: 409 })
+  const favorite = await getFavoriteById(
+    req.params.favoriteId,
+    req.user.user_id
+  );
+  console.log('favorite by idd', favorite);
+  favorite
+    ? res.json({ favorite: favorite, status: 200 })
+    : res.json({ message: `Favorite news not found`, status: 409 });
 };
 
 const like_news_post = async (req, res) => {
-  console.log("user id", req.user.user_id);
+  console.log('user id', req.user.user_id);
   const likedNews = await getAllLikedNewsOfUser(req.user.user_id);
   var saveLiked = true;
   likedNews.forEach((liked) => {
@@ -211,11 +227,32 @@ const liked_number_of_news_get = async (req, res) => {
 };
 
 const user_like_of_news_get = async (req, res) => {
-  const like = await getUserLikeOfOneNews(req.params.newsId,req.user.user_id);
+  const like = await getUserLikeOfOneNews(req.params.newsId, req.user.user_id);
   if (like.length > 0) {
     res.json(like);
   } else {
     res.json({ message: `User like not found`, status: 409 });
+  }
+};
+
+const insert_news_view = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error('News view validation error', errors.array());
+    const err = httpError('data not valid', 400);
+    next(err);
+    return;
+  }
+  await insertNewsView(req.body.userId, req.body.newsId);
+};
+
+const get_all_news_view_by_id = async (req, res, next) => {
+  const news = await getAllNewsViewsById(req.params.newsId);
+  if (news.length > 0) {
+    res.json(news);
+  } else {
+    const err = httpError('News view not found', 404);
+    next(err);
   }
 };
 
@@ -236,5 +273,7 @@ module.exports = {
   like_news_post,
   like_by_id_delete,
   liked_number_of_news_get,
-  user_like_of_news_get
+  user_like_of_news_get,
+  insert_news_view,
+  get_all_news_view_by_id,
 };
