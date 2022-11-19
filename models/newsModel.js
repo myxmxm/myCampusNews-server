@@ -3,10 +3,11 @@ const pool = require('../database/db');
 const { httpError } = require('../utils/errors');
 const promisePool = pool.promise();
 
-const getAllNews = async () => {
+const getAllNews = async (draft) => {
   try {
     const [rows] = await promisePool.query(
-      'SELECT * FROM news WHERE is_draft=0'
+      'SELECT * FROM news WHERE is_draft=?',
+      [draft]
     );
     return rows;
   } catch (e) {

@@ -34,9 +34,9 @@ const {
 } = require('../controllers/newsController');
 const { body } = require('express-validator');
 
+router.route('/:draft').get(news_list_get);
 router
   .route('/')
-  .get(news_list_get)
   .post(
     upload.single('newsPhoto'),
     body('title').notEmpty(),

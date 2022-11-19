@@ -25,7 +25,7 @@ const { httpError } = require('../utils/errors');
 const { validationResult } = require('express-validator');
 
 const news_list_get = async (req, res) => {
-  const news = await getAllNews();
+  const news = await getAllNews(req.params.draft);
   console.log('all news', news);
   if (news.length > 0) {
     res.json(news);
