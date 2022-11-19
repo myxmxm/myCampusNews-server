@@ -42,6 +42,7 @@ router
     body('title').notEmpty(),
     body('op').notEmpty(),
     body('content').notEmpty(),
+    body('draft').notEmpty(),
     news_post
   );
 
