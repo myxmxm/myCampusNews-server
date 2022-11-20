@@ -1,7 +1,7 @@
-"use strict";
-const { httpError } = require("../utils/errors");
-const { validationResult } = require("express-validator");
-const { makeThumbnail } = require("../utils/resize");
+'use strict';
+const { httpError } = require('../utils/errors');
+const { validationResult } = require('express-validator');
+const { makeThumbnail } = require('../utils/resize');
 const {
   getAllUsers,
   getUserById,
@@ -10,14 +10,14 @@ const {
   updateUserPassword,
   updateUserAvatar,
   updateUserInfo,
-} = require("../models/userModel");
+} = require('../models/userModel');
 
 const user_list_get = async (req, res) => {
   const users = await getAllUsers();
   users.map((user) => {
     delete user.password;
   });
-  console.log("all users", users);
+  //console.log("all users", users);
   res.json(users);
 };
 
@@ -34,8 +34,8 @@ const user_get_by_id = async (req, res, next) => {
 const user_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("user_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('user_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -50,7 +50,7 @@ const user_post = async (req, res, next) => {
     const uid = await insertUser(req.body);
     res.json({ message: `user added with id: ${uid}` });
   } else {
-    res.json({ message: "This user email already exist" });
+    res.json({ message: 'This user email already exist' });
   }
 };
 
@@ -62,8 +62,8 @@ const user_delete = async (req, res) => {
 const user_password_update_put = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("user_password_update_put validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('user_password_update_put validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -73,7 +73,7 @@ const user_password_update_put = async (req, res) => {
 
 const user_avatar_update_put = async (req, res, next) => {
   if (!req.file) {
-    const err = httpError("Invalid file", 400);
+    const err = httpError('Invalid file', 400);
     next(err);
     return;
   }
@@ -88,17 +88,17 @@ const user_avatar_update_put = async (req, res, next) => {
       console.log(`user avatar updated with avatar name ${req.file.filename}`);
     }
   } catch (e) {
-    console.log("user_avatar_update_put", e.message);
-    const err = httpError("Invalid file", 400);
+    console.log('user_avatar_update_put', e.message);
+    const err = httpError('Invalid file', 400);
     next(err);
     return;
   }
 };
 
 const user_info_get = (req, res, next) => {
-  console.log("user info", req.user);
+  console.log('user info', req.user);
   if (!req.user) {
-    next(httpError("token not valid", 400));
+    next(httpError('token not valid', 400));
   } else {
     res.json({ user: req.user });
   }
@@ -107,13 +107,13 @@ const user_info_get = (req, res, next) => {
 const user_info_update_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("user_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('user_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
   if (!req.file) {
-    const err = httpError("Invalid file", 400);
+    const err = httpError('Invalid file', 400);
     next(err);
     return;
   }
@@ -134,12 +134,12 @@ const user_info_update_put = async (req, res, next) => {
         req.user.user_id
       );
       res.json({ message: `User info updated` });
-    }else {
-      res.json({ message: "This user email already exist" });
+    } else {
+      res.json({ message: 'This user email already exist' });
     }
   } catch (e) {
-    console.log("user_info_update_put", e.message);
-    const err = httpError("Invalid file", 400);
+    console.log('user_info_update_put', e.message);
+    const err = httpError('Invalid file', 400);
     next(err);
     return;
   }
