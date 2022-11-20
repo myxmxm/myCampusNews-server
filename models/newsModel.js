@@ -3,9 +3,12 @@ const pool = require('../database/db');
 const { httpError } = require('../utils/errors');
 const promisePool = pool.promise();
 
-const getAllNews = async () => {
+const getAllNews = async (draft) => {
   try {
-    const [rows] = await promisePool.query('SELECT * FROM news');
+    const [rows] = await promisePool.query(
+      'SELECT * FROM news WHERE is_draft=?',
+      [draft]
+    );
     return rows;
   } catch (e) {
     console.error('error', e.message);
@@ -30,8 +33,8 @@ const getNews = async (newsId, next) => {
 const insertNews = async (news) => {
   try {
     const [rows] = await promisePool.execute(
-      'INSERT INTO news (news_title, news_op, news_content, photoName) VALUES (?,?,?,?)',
-      [news.title, news.op, news.content, news.photoName]
+      'INSERT INTO news (news_title, news_op, news_content, photoName, is_draft) VALUES (?,?,?,?,?)',
+      [news.title, news.op, news.content, news.photoName, news.draft]
     );
     console.log('model insert news', rows);
     return rows.insertId;
