@@ -34,7 +34,7 @@ const {
 } = require('../controllers/newsController');
 const { body } = require('express-validator');
 
-router.route('/:draft').get(news_list_get);
+router.route('/draft/:draft').get(news_list_get);
 router
   .route('/')
   .post(
