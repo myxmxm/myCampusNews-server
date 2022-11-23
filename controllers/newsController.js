@@ -56,13 +56,19 @@ const news_post = async (req, res, next) => {
   console.log('add news data', req.body);
   console.log('news photo name', req.file);
 
-  if (!req.file) {
-    const err = httpError('Invalid file', 400);
-    next(err);
-    return;
-  }
+  // if (!req.file) {
+  //   const err = httpError('Invalid file', 400);
+  //   next(err);
+  //   return;
+  // }
   const news = req.body;
-  news.photoName = req.file.filename;
+  if(req.file) {
+    news.photoName = req.file.filename
+  }else{
+    news.photoName = "unavailable";
+  }
+  
+  // news.photoName = req.file.filename || "unavailable";
   const id = await insertNews(news);
   res.json({ message: `news added with id: ${id}`, status: 200 });
 };
