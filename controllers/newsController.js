@@ -20,6 +20,8 @@ const {
   getUserLikeOfOneNews,
   getAllNewsViewsById,
   insertNewsView,
+  insertParagraphToNews,
+  getParagraphOfNews,
 } = require('../models/newsModel');
 const { httpError } = require('../utils/errors');
 const { validationResult } = require('express-validator');
@@ -53,19 +55,48 @@ const news_post = async (req, res, next) => {
     return;
   }
 
-  console.log('add news data', req.body);
-  console.log('news photo name', req.file);
+  const news = req.body;
+  if(req.file) {
+    news.photoName = req.file.filename
+  }else{
+    news.photoName = "unavailable";
+  }
+  
+  const id = await insertNews(news);
+  res.json({ message: `${id}`, status: 200 });
+};
 
-  if (!req.file) {
-    const err = httpError('Invalid file', 400);
+const news_paragraph_get = async (req, res, next) => {
+  const paragraph = await getParagraphOfNews(req.params.newsId);
+  if (!paragraph) {
+    const err = httpError(`Paragraph not found by news id ${req.params.newsId}`, 404);
     next(err);
     return;
   }
-  const news = req.body;
-  news.photoName = req.file.filename;
-  const id = await insertNews(news);
-  res.json({ message: `news added with id: ${id}`, status: 200 });
+  res.json(paragraph);
 };
+
+const paragraph_to_news_post = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error('paragraph_to_news_post validation', errors.array());
+    const err = httpError('data not valid', 400);
+    next(err);
+    return;
+  }
+
+  const paragraph = req.body;
+  if(req.file) {
+    paragraph.photoName = req.file.filename
+  }else{
+    paragraph.photoName = "unavailable";
+  }
+  console.log(req.params.newsId);
+  console.log(paragraph);
+  
+  const id = await insertParagraphToNews(req.params.newsId, paragraph);
+  res.json({ message: `paragraph added to news ${req.params.newsId} with id: ${id}`, status: 200 });
+}; 
 
 const news_delete = async (req, res, next) => {
   await deleteNews(req.params.newsId, next);
@@ -244,6 +275,7 @@ const insert_news_view = async (req, res) => {
     return;
   }
   await insertNewsView(req.body.userId, req.body.newsId);
+  res.json({ status: 200 });
 };
 
 const get_all_news_view_by_id = async (req, res, next) => {
@@ -260,6 +292,8 @@ module.exports = {
   news_list_get,
   news_get,
   news_post,
+  news_paragraph_get,
+  paragraph_to_news_post,
   news_delete,
   news_update_put,
   comment_post,
