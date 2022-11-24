@@ -61,8 +61,8 @@ const getParagraphOfNews = async (newsId, next) => {
 const insertParagraphToNews = async (newsId, paragraph) => {
   try {
     const [rows] = await promisePool.execute(
-      'INSERT INTO news_paragraph (n_id, p_photo_name, p_photo_description, p_content) VALUES (?,?,?,?)',
-      [newsId, paragraph.photoName, paragraph.photoDescription, paragraph.content]
+      'INSERT INTO news_paragraph (n_id, p_photo_name, p_photo_description, p_content, m_type) VALUES (?,?,?,?,?)',
+      [newsId, paragraph.photoName, paragraph.photoDescription, paragraph.content, paragraph.type]
     );
     console.log('model insert paragraph to news', rows);
     return rows.insertId;

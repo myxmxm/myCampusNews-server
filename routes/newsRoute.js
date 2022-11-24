@@ -2,14 +2,21 @@
 
 const express = require("express");
 const multer = require("multer");
-const fileFilter = (req, file, cb) => {
+const imageFileFilter = (req, file, cb) => {
   if (file.mimetype.includes("image")) {
     cb(null, true);
   } else {
     cb(null, false);
   }
 };
-const upload = multer({ dest: "./uploads/", fileFilter });
+const VideoFileFilter = (req, file, cb) => {
+  if (file.mimetype.includes("video")) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+const upload = multer({ dest: "./uploads/", imageFileFilter });
 const router = express.Router();
 const {
   news_list_get,
@@ -53,8 +60,9 @@ router
   .get(news_paragraph_get)
   .post(
     upload.single("paragraphPhoto"),
-    body("photoDescription").notEmpty(),
-    body("content").notEmpty(),
+    body("photoDescription"),
+    body("content"),
+    body("type"),
     paragraph_to_news_post
   );
 
