@@ -22,6 +22,7 @@ const {
   insertNewsView,
   insertParagraphToNews,
   getParagraphOfNews,
+  getNewsByCategory,
 } = require("../models/newsModel");
 const { httpError } = require("../utils/errors");
 const { validationResult } = require("express-validator");
@@ -44,6 +45,15 @@ const news_get = async (req, res, next) => {
     return;
   }
   res.json(news);
+};
+
+const news_category_list_get = async (req, res) => {
+  const news = await getNewsByCategory(req.params.category);
+  if (news.length > 1) {
+    res.json(news);
+  } else {
+    res.json({ message: `News by this category not found`, status: 409 });
+  }
 };
 
 const news_post = async (req, res, next) => {
@@ -297,6 +307,7 @@ const get_all_news_view_by_id = async (req, res, next) => {
 module.exports = {
   news_list_get,
   news_get,
+  news_category_list_get,
   news_post,
   news_paragraph_get,
   paragraph_to_news_post,
