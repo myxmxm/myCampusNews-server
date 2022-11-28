@@ -40,10 +40,12 @@ const {
   insert_news_view,
   paragraph_to_news_post,
   news_paragraph_get,
+  news_category_list_get,
 } = require("../controllers/newsController");
 const { body } = require("express-validator");
 
 router.route("/draft/:draft").get(news_list_get);
+router.route("/search/category/:category").get(news_category_list_get);
 router
   .route("/")
   .post(
@@ -56,7 +58,7 @@ router
   );
 
 router
-  .route("/paragraph/:newsId")
+  .route("/paragraph/:newsId") 
   .get(news_paragraph_get)
   .post(
     upload.single("paragraphPhoto"),

@@ -30,11 +30,26 @@ const getNews = async (newsId, next) => {
   }
 };
 
+const getNewsByCategory = async (category, next) => {
+  try {
+    const [rows] = await promisePool.execute(
+      'SELECT * FROM news WHERE category = ?',
+      [category]
+    );
+    console.log('Get by category result?', rows);
+    return rows;
+  } catch (e) {
+    console.error('model get news by category', e.message);
+    const err = httpError('Sql error', 500);
+    next(err);
+  }
+};
+
 const insertNews = async (news) => {
   try {
     const [rows] = await promisePool.execute(
-      'INSERT INTO news (news_title, news_op, news_content, photoName, is_draft) VALUES (?,?,?,?,?)',
-      [news.title, news.op, news.content, news.photoName, news.draft]
+      'INSERT INTO news (news_title, news_op, news_content, photoName, is_draft, category) VALUES (?,?,?,?,?,?)',
+      [news.title, news.op, news.content, news.photoName, news.draft, news.category]
     );
     console.log('model insert news', rows);
     return rows.insertId;
@@ -305,6 +320,7 @@ const getAllNewsViewsById = async (newsId) => {
 module.exports = {
   getAllNews,
   getNews,
+  getNewsByCategory,
   insertNews,
   getParagraphOfNews,
   insertParagraphToNews,
