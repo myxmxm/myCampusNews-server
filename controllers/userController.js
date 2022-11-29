@@ -10,6 +10,7 @@ const {
   updateUserPassword,
   updateUserAvatar,
   updateUserInfo,
+  updateUserRole,
 } = require('../models/userModel');
 
 const user_list_get = async (req, res) => {
@@ -145,6 +146,20 @@ const user_info_update_put = async (req, res, next) => {
   }
 };
 
+const user_role_update_put = async (req, res) => {
+  try {
+      const updated = await updateUserRole(
+        req.body.role,
+        req.params.userId
+      );
+      res.json({ message: `User role updated` , status: 200});
+  } catch (e) {
+    console.log('user_role_update_put', e.message);
+    res.json({ message: e.message , status: 409});
+    return;
+  }
+}
+
 module.exports = {
   user_list_get,
   user_get_by_id,
@@ -154,4 +169,5 @@ module.exports = {
   user_avatar_update_put,
   user_info_get,
   user_info_update_put,
+  user_role_update_put
 };

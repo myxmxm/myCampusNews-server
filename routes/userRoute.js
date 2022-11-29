@@ -21,6 +21,7 @@ const {
   user_avatar_update_put,
   user_info_get,
   user_info_update_put,
+  user_role_update_put,
 } = require("../controllers/userController");
 
 router
@@ -42,9 +43,12 @@ router
     body("fullName").notEmpty(),
     body("email").isEmail(),
     body("contactNumber"),
-    body("employeeNumber"), 
-    body("departmentLocation"),  
-    user_info_update_put);
+    body("employeeNumber"),
+    body("departmentLocation"),
+    user_info_update_put
+  );
+
+router.route("/update/role/:userId").put(user_role_update_put);
 
 router.route("/userid/:userId").get(user_get_by_id).delete(user_delete);
 

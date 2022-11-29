@@ -33,7 +33,7 @@ const getNews = async (newsId, next) => {
 const getNewsByCategory = async (category, next) => {
   try {
     const [rows] = await promisePool.execute(
-      'SELECT * FROM news WHERE category = ?',
+      'SELECT * FROM news WHERE category = ? AND is_draft != 1',
       [category]
     );
     console.log('Get by category result?', rows);

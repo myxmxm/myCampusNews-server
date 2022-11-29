@@ -49,7 +49,7 @@ const news_get = async (req, res, next) => {
 
 const news_category_list_get = async (req, res) => {
   const news = await getNewsByCategory(req.params.category);
-  if (news.length > 1) {
+  if (news.length > 0) {
     res.json(news);
   } else {
     res.json({ message: `News by this category not found`, status: 409 });
