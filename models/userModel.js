@@ -103,6 +103,18 @@ const updateUserInfo = async (user, avatar, UserId) => {
   }
 };
 
+const updateUserRole = async (role, UserId) => {
+  try {
+    const [rows] = await promisePool.execute(
+      "UPDATE user SET role = ? WHERE user_id = ?",
+      [role, UserId]
+    );
+    return rows.affectedRows === 1;
+  } catch (e) {
+    console.error("model update user role", e.message);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -111,5 +123,6 @@ module.exports = {
   updateUserPassword,
   updateUserAvatar,
   getUserLogin,
-  updateUserInfo
+  updateUserInfo,
+  updateUserRole
 };
