@@ -41,6 +41,7 @@ const {
   paragraph_to_news_post,
   news_paragraph_get,
   news_category_list_get,
+  news_highlighted_update_put,
 } = require("../controllers/newsController");
 const { body } = require("express-validator");
 
@@ -67,6 +68,10 @@ router
     body("type"),
     paragraph_to_news_post
   );
+
+router
+  .route("/highlighted/:newsId") 
+  .put(news_highlighted_update_put)
 
 router
   .route("/:newsId")

@@ -23,6 +23,7 @@ const {
   insertParagraphToNews,
   getParagraphOfNews,
   getNewsByCategory,
+  updateNewsHighLighted,
 } = require("../models/newsModel");
 const { httpError } = require("../utils/errors");
 const { validationResult } = require("express-validator");
@@ -136,6 +137,20 @@ const news_update_put = async (req, res, next) => {
   req.body.id = req.params.newsId;
   const updated = await updateNews(req.body, req.params.newsId);
   res.json({ message: `News updated: ${updated}` });
+};
+
+const news_highlighted_update_put = async (req, res) => {
+  try {
+    const updated = await updateNewsHighLighted(
+      req.body.highlighted,
+      req.params.newsId
+    );
+    res.json({ message: `News hightlighted updated: ${updated}` });
+  } catch (e) {
+    console.log("news_highlighted_update_put", e.message);
+    res.json({ message: e.message, status: 409 });
+    return;
+  }
 };
 
 const comment_post = async (req, res, next) => {
@@ -327,4 +342,5 @@ module.exports = {
   user_like_of_news_get,
   insert_news_view,
   get_all_news_view_by_id,
+  news_highlighted_update_put,
 };

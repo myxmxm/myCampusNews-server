@@ -111,6 +111,18 @@ const updateNews = async (news, newId) => {
   }
 };
 
+const updateNewsHighLighted = async (highLighted, newId) => {
+  try {
+    const [rows] = await promisePool.execute(
+      'UPDATE news SET highlighted = ? WHERE news_id = ?',
+      [highLighted, newId]
+    );
+    return rows.affectedRows === 1;
+  } catch (e) {
+    console.error('model update news', e.message);
+  }
+};
+
 const insertComment = async (userId, comment) => {
   try {
     const [rows] = await promisePool.execute(
@@ -341,4 +353,5 @@ module.exports = {
   getUserLikeOfOneNews,
   insertNewsView,
   getAllNewsViewsById,
+  updateNewsHighLighted
 };
