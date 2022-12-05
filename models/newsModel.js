@@ -45,11 +45,18 @@ const getNewsByCategory = async (category, next) => {
   }
 };
 
-const insertNews = async (news) => {
+const insertNews = async (newsObject) => {
   try {
     const [rows] = await promisePool.execute(
       'INSERT INTO news (news_title, news_op, news_content, photoName, is_draft, category) VALUES (?,?,?,?,?,?)',
-      [news.title, news.op, news.content, news.photoName, news.draft, news.category]
+      [
+        newsObject.news_title,
+        newsObject.news_op,
+        newsObject.news_content,
+        newsObject.photoName,
+        newsObject.draft,
+        newsObject.category,
+      ]
     );
     console.log('model insert news', rows);
     return rows.insertId;
@@ -77,7 +84,13 @@ const insertParagraphToNews = async (newsId, paragraph) => {
   try {
     const [rows] = await promisePool.execute(
       'INSERT INTO news_paragraph (n_id, p_photo_name, p_photo_description, p_content, m_type) VALUES (?,?,?,?,?)',
-      [newsId, paragraph.photoName, paragraph.photoDescription, paragraph.content, paragraph.type]
+      [
+        newsId,
+        paragraph.photoName,
+        paragraph.photoDescription,
+        paragraph.content,
+        paragraph.type,
+      ]
     );
     console.log('model insert paragraph to news', rows);
     return rows.insertId;
@@ -85,7 +98,7 @@ const insertParagraphToNews = async (newsId, paragraph) => {
     console.error('model insert paragraph to news', e.message);
   }
 };
- 
+
 const deleteNews = async (newsId) => {
   try {
     const [rows] = await promisePool.execute(
@@ -353,5 +366,5 @@ module.exports = {
   getUserLikeOfOneNews,
   insertNewsView,
   getAllNewsViewsById,
-  updateNewsHighLighted
+  updateNewsHighLighted,
 };
