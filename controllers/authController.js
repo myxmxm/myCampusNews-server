@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { getAllUsers, insertUser } = require('../models/userModel');
 const { httpError } = require('../utils/errors');
-
+// user loging with token
 const login = (req, res, next) => {
-  // TODO: add passport authenticate
+  // add passport authenticate
   passport.authenticate('local', { session: false }, (err, user, info) => {
     console.log('local params', err, user, info);
     if (err || !user) {
@@ -27,7 +27,7 @@ const login = (req, res, next) => {
     return res.json({ user: user, token: token });
   })(req, res, next);
 };
-
+//user registration with email check in database
 const signUp = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

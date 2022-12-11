@@ -12,16 +12,15 @@ const {
   updateUserInfo,
   updateUserRole,
 } = require('../models/userModel');
-
+//get list of user
 const user_list_get = async (req, res) => {
   const users = await getAllUsers();
   users.map((user) => {
     delete user.password;
   });
-  //console.log("all users", users);
   res.json(users);
 };
-
+//get user by id
 const user_get_by_id = async (req, res, next) => {
   const user = await getUserById(req.params.userId);
   if (!user) {
@@ -31,7 +30,7 @@ const user_get_by_id = async (req, res, next) => {
   }
   res.json(user);
 };
-
+//add new user
 const user_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -54,12 +53,12 @@ const user_post = async (req, res, next) => {
     res.json({ message: 'This user email already exist' });
   }
 };
-
+//delete user by id
 const user_delete = async (req, res) => {
   await deleteUser(req.params.userId);
   res.json({ message: `User deleted: ${req.params.userId}` });
 };
-
+//update user password
 const user_password_update_put = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -71,7 +70,7 @@ const user_password_update_put = async (req, res) => {
   const updated = await updateUserPassword(req.body, req.user.user_id);
   res.json({ message: `User password updated ${updated}` });
 };
-
+//update user avatar
 const user_avatar_update_put = async (req, res, next) => {
   if (!req.file) {
     const err = httpError('Invalid file', 400);
@@ -95,7 +94,7 @@ const user_avatar_update_put = async (req, res, next) => {
     return;
   }
 };
-
+//get user info
 const user_info_get = (req, res, next) => {
   console.log('user info', req.user);
   if (!req.user) {
@@ -104,7 +103,7 @@ const user_info_get = (req, res, next) => {
     res.json({ user: req.user });
   }
 };
-
+//update user info
 const user_info_update_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -145,7 +144,7 @@ const user_info_update_put = async (req, res, next) => {
     return;
   }
 };
-
+//update user privilege
 const user_role_update_put = async (req, res) => {
   try {
       const updated = await updateUserRole(

@@ -27,17 +27,16 @@ const {
 } = require("../models/newsModel");
 const { httpError } = require("../utils/errors");
 const { validationResult } = require("express-validator");
-
+// get all news
 const news_list_get = async (req, res) => {
   const news = await getAllNews(req.params.draft);
-  //console.log('all news', news);
   if (news.length > 0) {
     res.json(news);
   } else {
     const err = httpError("News not found", 404);
   }
 };
-
+// get news with news Id
 const news_get = async (req, res, next) => {
   const news = await getNews(req.params.newsId);
   if (!news) {
@@ -47,7 +46,7 @@ const news_get = async (req, res, next) => {
   }
   res.json(news);
 };
-
+// get news with specific category
 const news_category_list_get = async (req, res) => {
   const news = await getNewsByCategory(req.params.category);
   if (news.length > 0) {
@@ -56,7 +55,7 @@ const news_category_list_get = async (req, res) => {
     res.json({ message: `News by this category not found`, status: 409 });
   }
 };
-
+// post news with contents validation
 const news_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -76,7 +75,7 @@ const news_post = async (req, res, next) => {
   const id = await insertNews(news);
   res.json({ message: `${id}`, status: 200 });
 };
-
+// get all paragraphs of a news
 const news_paragraph_get = async (req, res, next) => {
   const paragraph = await getParagraphOfNews(req.params.newsId);
   if (!paragraph) {
@@ -89,7 +88,7 @@ const news_paragraph_get = async (req, res, next) => {
   }
   res.json(paragraph);
 };
-
+// add paragraph to news
 const paragraph_to_news_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -114,7 +113,7 @@ const paragraph_to_news_post = async (req, res, next) => {
     status: 200,
   });
 };
-
+// delete news
 const news_delete = async (req, res, next) => {
   await deleteNews(req.params.newsId, next);
   let id = req.params.newsId;
@@ -125,7 +124,7 @@ const news_delete = async (req, res, next) => {
   }
   res.json({ message: `News id ${req.params.newsId} deleted` });
 };
-
+// update news
 const news_update_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -138,7 +137,7 @@ const news_update_put = async (req, res, next) => {
   const updated = await updateNews(req.body, req.params.newsId);
   res.json({ message: `News updated: ${updated}` });
 };
-
+// change highlight status of a news
 const news_highlighted_update_put = async (req, res) => {
   try {
     const updated = await updateNewsHighLighted(
@@ -152,7 +151,7 @@ const news_highlighted_update_put = async (req, res) => {
     return;
   }
 };
-
+// post comment
 const comment_post = async (req, res, next) => {
   console.log(`nid:${req.params.newsId} and uid: ${req.params.userId}`);
   const errors = validationResult(req);
@@ -169,7 +168,7 @@ const comment_post = async (req, res, next) => {
   const id = await insertComment(req.user.user_id, comment);
   res.json({ message: `comment added with id: ${id}` });
 };
-
+// get comment by news id
 const comment_get_by_news_id = async (req, res, next) => {
   const comments = await getAllCommentsByNewsId(req.params.newsId);
   if (comments.length > 0) {
@@ -179,7 +178,7 @@ const comment_get_by_news_id = async (req, res, next) => {
     next(err);
   }
 };
-
+// delete comment by comment id
 const comment_delete_by_comment_id = async (req, res, next) => {
   await deleteCommentByCommentId(req.params.commentId, next);
   let id = req.params.commentId;
@@ -190,7 +189,7 @@ const comment_delete_by_comment_id = async (req, res, next) => {
   }
   res.json({ message: `Comment id ${req.params.commentId} deleted` });
 };
-
+// update comment by comment id
 const comment_update_by_comment_id_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -202,14 +201,13 @@ const comment_update_by_comment_id_put = async (req, res, next) => {
     next(err);
     return;
   }
-  //   req.body.id = req.params.newsId;
   const updated = await updateCommentByCommentId(
     req.body.content,
     req.params.commentId
   );
   res.json({ message: `Comment updated: ${updated}` });
 };
-
+//add news to bookmark
 const favorite_news_post = async (req, res) => {
   const favoriteNews = await getAllFavoriteNewsOfUser(req.user.user_id);
   var saveFavorite = true;
@@ -231,7 +229,7 @@ const favorite_news_post = async (req, res) => {
     });
   }
 };
-
+//get all bookmarked news of user
 const user_favorite_news_list_get = async (req, res) => {
   const favoriteNews = await getAllFavoriteNewsOfUser(req.user.user_id);
   console.log("user's all favorite news", favoriteNews);
@@ -241,7 +239,7 @@ const user_favorite_news_list_get = async (req, res) => {
     res.json({ message: `Favorite news not found`, status: 409 });
   }
 };
-
+//remove news from bookmark list
 const favorite_by_id_delete = async (req, res) => {
   await deleteFavoriteByFavoriteId(req.params.favoriteId);
   res.json({
@@ -260,7 +258,7 @@ const favorite_by_id_get = async (req, res, next) => {
     ? res.json({ favorite: favorite, status: 200 })
     : res.json({ message: `Favorite news not found`, status: 409 });
 };
-
+//thumb up the news
 const like_news_post = async (req, res) => {
   console.log("user id", req.user.user_id);
   const likedNews = await getAllLikedNewsOfUser(req.user.user_id);
@@ -277,12 +275,12 @@ const like_news_post = async (req, res) => {
     res.json({ message: `You have already liked this news`, status: 409 });
   }
 };
-
+//remove thumb up to a specific news
 const like_by_id_delete = async (req, res) => {
   await deleteLikeByLikeId(req.params.newsId, req.user.user_id);
   res.json({ message: `You no longer like this news`, status: 200 });
 };
-
+//get the total number of thumbed up by users to a specific news
 const liked_number_of_news_get = async (req, res) => {
   const likedListOfNews = await getNumberOfLikeByNewsId(req.params.newsId);
   res.json(likedListOfNews);
@@ -296,7 +294,7 @@ const user_like_of_news_get = async (req, res) => {
     res.json({ message: `User like not found`, status: 409 });
   }
 };
-
+//add view number to a specific news
 const insert_news_view = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -308,7 +306,7 @@ const insert_news_view = async (req, res) => {
   await insertNewsView(req.body.userId, req.body.newsId);
   res.json({ status: 200 });
 };
-
+//get total number of view of specific news
 const get_all_news_view_by_id = async (req, res, next) => {
   const news = await getAllNewsViewsById(req.params.newsId);
   if (news.length > 0) {

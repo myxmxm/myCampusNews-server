@@ -6,6 +6,7 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const { getUserLogin } = require('../models/userModel');
 
+// local strategy for email and password login
 passport.use(
   new Strategy(
     {
@@ -16,7 +17,6 @@ passport.use(
       const params = [username];
       try {
         const [user] = await getUserLogin(params);
-        //console.log('Local strategy', user);
         if (user === undefined /*!user*/) {
           return done(null, false, { message: 'Incorrect email.' });
         }
@@ -31,7 +31,7 @@ passport.use(
     }
   )
 );
-
+// JWT strategy for handing bearer token
 passport.use(
   new JWTStrategy(
     {
@@ -39,7 +39,6 @@ passport.use(
       secretOrKey: process.env.JWT_SECRET,
     },
     (jwtPayload, done) => {
-      //console.log('jwtpayload', jwtPayload);
       return done(null, jwtPayload);
     }
   )

@@ -7,21 +7,25 @@ const userRoute = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
 const { httpError } = require('./utils/errors');
 const passport = require('./utils/pass');
+//start new express application
 const app = express()
 const port = 3000
 
 app.use(cors());
+// use passport autentication
 app.use(passport.initialize());
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
+//set static folder for news image uploading
 app.use(express.static('uploads')); 
+//set static folder for user avatar uploading
 app.use('/avatar',express.static('avatar'));
 
 
 app.use('/auth', authRoute);
 app.use('/news', passport.authenticate('jwt', {session: false}), newsRoute);
 app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
-
+// handing error
 app.use((req, res, next)=>{
   const err = httpError('Not found', 404);
   next(err);
