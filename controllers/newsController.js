@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const {
   getAllNews,
   getNews,
@@ -24,17 +24,16 @@ const {
   getParagraphOfNews,
   getNewsByCategory,
   updateNewsHighLighted,
-} = require("../models/newsModel");
-const { httpError } = require("../utils/errors");
-const { validationResult } = require("express-validator");
+} = require('../models/newsModel');
+const { httpError } = require('../utils/errors');
+const { validationResult } = require('express-validator');
 
 const news_list_get = async (req, res) => {
   const news = await getAllNews(req.params.draft);
-  //console.log('all news', news);
   if (news.length > 0) {
     res.json(news);
   } else {
-    const err = httpError("News not found", 404);
+    const err = httpError('News not found', 404);
   }
 };
 
@@ -60,8 +59,8 @@ const news_category_list_get = async (req, res) => {
 const news_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("news_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('news_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -70,7 +69,7 @@ const news_post = async (req, res, next) => {
   if (req.file) {
     news.photoName = req.file.filename;
   } else {
-    news.photoName = "unavailable";
+    news.photoName = 'unavailable';
   }
 
   const id = await insertNews(news);
@@ -93,8 +92,8 @@ const news_paragraph_get = async (req, res, next) => {
 const paragraph_to_news_post = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("paragraph_to_news_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('paragraph_to_news_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -103,10 +102,8 @@ const paragraph_to_news_post = async (req, res, next) => {
   if (req.file) {
     paragraph.photoName = req.file.filename;
   } else {
-    paragraph.photoName = "unavailable";
+    paragraph.photoName = 'unavailable';
   }
-  console.log(req.params.newsId);
-  console.log(paragraph);
 
   const id = await insertParagraphToNews(req.params.newsId, paragraph);
   res.json({
@@ -119,7 +116,7 @@ const news_delete = async (req, res, next) => {
   await deleteNews(req.params.newsId, next);
   let id = req.params.newsId;
   if (!id) {
-    const err = httpError("Fail to delete news", 400);
+    const err = httpError('Fail to delete news', 400);
     next(err);
     return;
   }
@@ -129,8 +126,8 @@ const news_delete = async (req, res, next) => {
 const news_update_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("news_update_put validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('news_update_put validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -147,23 +144,21 @@ const news_highlighted_update_put = async (req, res) => {
     );
     res.json({ message: `News hightlighted updated: ${updated}` });
   } catch (e) {
-    console.log("news_highlighted_update_put", e.message);
+    console.log('news_highlighted_update_put', e.message);
     res.json({ message: e.message, status: 409 });
     return;
   }
 };
 
 const comment_post = async (req, res, next) => {
-  console.log(`nid:${req.params.newsId} and uid: ${req.params.userId}`);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("comment_post validation", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('comment_post validation', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
 
-  console.log("add comment data", req.body);
   const comment = req.params;
   comment.content = req.body.content;
   const id = await insertComment(req.user.user_id, comment);
@@ -175,7 +170,7 @@ const comment_get_by_news_id = async (req, res, next) => {
   if (comments.length > 0) {
     res.json(comments);
   } else {
-    const err = httpError("comments not found", 404);
+    const err = httpError('comments not found', 404);
     next(err);
   }
 };
@@ -184,7 +179,7 @@ const comment_delete_by_comment_id = async (req, res, next) => {
   await deleteCommentByCommentId(req.params.commentId, next);
   let id = req.params.commentId;
   if (!id) {
-    const err = httpError("Fail to delete comment", 400);
+    const err = httpError('Fail to delete comment', 400);
     next(err);
     return;
   }
@@ -195,10 +190,10 @@ const comment_update_by_comment_id_put = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error(
-      "comment_by_comment_id_update_put validation",
+      'comment_by_comment_id_update_put validation',
       errors.array()
     );
-    const err = httpError("data not valid", 400);
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -234,7 +229,6 @@ const favorite_news_post = async (req, res) => {
 
 const user_favorite_news_list_get = async (req, res) => {
   const favoriteNews = await getAllFavoriteNewsOfUser(req.user.user_id);
-  console.log("user's all favorite news", favoriteNews);
   if (favoriteNews.length > 0) {
     res.json(favoriteNews);
   } else {
@@ -255,14 +249,12 @@ const favorite_by_id_get = async (req, res, next) => {
     req.params.favoriteId,
     req.user.user_id
   );
-  console.log("favorite by idd", favorite);
   favorite
     ? res.json({ favorite: favorite, status: 200 })
     : res.json({ message: `Favorite news not found`, status: 409 });
 };
 
 const like_news_post = async (req, res) => {
-  console.log("user id", req.user.user_id);
   const likedNews = await getAllLikedNewsOfUser(req.user.user_id);
   var saveLiked = true;
   likedNews.forEach((liked) => {
@@ -300,8 +292,8 @@ const user_like_of_news_get = async (req, res) => {
 const insert_news_view = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("News view validation error", errors.array());
-    const err = httpError("data not valid", 400);
+    console.error('News view validation error', errors.array());
+    const err = httpError('data not valid', 400);
     next(err);
     return;
   }
@@ -314,7 +306,7 @@ const get_all_news_view_by_id = async (req, res, next) => {
   if (news.length > 0) {
     res.json(news);
   } else {
-    const err = httpError("News view not found", 404);
+    const err = httpError('News view not found', 404);
     next(err);
   }
 };

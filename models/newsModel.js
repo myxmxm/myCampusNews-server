@@ -21,7 +21,6 @@ const getNews = async (newsId, next) => {
       'SELECT * FROM news WHERE news_id = ?',
       [newsId]
     );
-    console.log('Get by id result?', rows);
     return rows[0];
   } catch (e) {
     console.error('model get news by id', e.message);
@@ -36,7 +35,6 @@ const getNewsByCategory = async (category, next) => {
       'SELECT * FROM news WHERE category = ? AND is_draft != 1',
       [category]
     );
-    console.log('Get by category result?', rows);
     return rows;
   } catch (e) {
     console.error('model get news by category', e.message);
@@ -46,6 +44,10 @@ const getNewsByCategory = async (category, next) => {
 };
 
 const insertNews = async (newsObject) => {
+  newsObject.category == ''
+    ? (newsObject.category = 'General')
+    : newsObject.category;
+
   try {
     const [rows] = await promisePool.execute(
       'INSERT INTO news (news_title, news_op, news_content, photoName, is_draft, category) VALUES (?,?,?,?,?,?)',
@@ -58,7 +60,6 @@ const insertNews = async (newsObject) => {
         newsObject.category,
       ]
     );
-    console.log('model insert news', rows);
     return rows.insertId;
   } catch (e) {
     console.error('model insert news', e.message);
@@ -71,7 +72,6 @@ const getParagraphOfNews = async (newsId, next) => {
       'SELECT * FROM news_paragraph WHERE n_id = ?',
       [newsId]
     );
-    console.log('Get news paragraph by id result?', rows);
     return rows;
   } catch (e) {
     console.error('model get news by id', e.message);
@@ -92,7 +92,6 @@ const insertParagraphToNews = async (newsId, paragraph) => {
         paragraph.type,
       ]
     );
-    console.log('model insert paragraph to news', rows);
     return rows.insertId;
   } catch (e) {
     console.error('model insert paragraph to news', e.message);
@@ -105,7 +104,6 @@ const deleteNews = async (newsId) => {
       'DELETE FROM news WHERE news_id = ?',
       [newsId]
     );
-    console.log('model delete news', rows);
     return true;
   } catch (e) {
     console.error('model delete news', e.message);
@@ -142,7 +140,6 @@ const insertComment = async (userId, comment) => {
       'INSERT INTO news_comment (u_id, n_id, comment_content) VALUES (?,?,?)',
       [userId, comment.newsId, comment.content]
     );
-    console.log('model insert comment', rows);
     return rows.insertId;
   } catch (e) {
     console.error('model insert comment', e.message);
@@ -155,7 +152,6 @@ const getAllCommentsByNewsId = async (newsId, next) => {
       'SELECT * FROM news_comment WHERE n_id = ?',
       [newsId]
     );
-    console.log('Get comments by news id result', rows);
     return rows;
   } catch (e) {
     console.error('model get comments by news id', e.message);
@@ -170,7 +166,6 @@ const deleteCommentByCommentId = async (commentId) => {
       'DELETE FROM news_comment WHERE comment_id = ?',
       [commentId]
     );
-    console.log('model delete comment', rows);
     return true;
   } catch (e) {
     console.error('model delete comment', e.message);
@@ -195,7 +190,6 @@ const insertFavoriteNews = async (newsId, userId) => {
       'INSERT INTO news_favorite(favorite_user_id, favorite_news_id) VALUES (?,?)',
       [userId, newsId]
     );
-    console.log('model insert favorite news', rows);
     return rows.insertId;
   } catch (e) {
     console.error('model insert favorite news', e.message);
@@ -220,7 +214,6 @@ const deleteFavoriteByFavoriteId = async (favoriteId) => {
       'DELETE FROM news_favorite WHERE favorite_news_id = ?',
       [favoriteId]
     );
-    console.log('model delete favorite news', rows);
     return true;
   } catch (e) {
     console.error('model delete favirite news', e.message);
@@ -233,7 +226,6 @@ const getFavoriteById = async (favoriteId, userId, next) => {
       'SELECT * FROM news_favorite WHERE favorite_news_id = ? AND favorite_user_id = ?',
       [favoriteId, userId]
     );
-    console.log('Get by id result?', rows);
     return rows[0];
   } catch (e) {
     console.error('model get news by id', e.message);
@@ -248,7 +240,6 @@ const insertLikeNews = async (newsId, userId) => {
       'INSERT INTO news_like(u_id, n_id) VALUES (?,?)',
       [userId, newsId]
     );
-    console.log('model insert like news', rows);
     return rows.insertId;
   } catch (e) {
     console.error('model insert like news', e.message);
@@ -261,7 +252,6 @@ const deleteLikeByLikeId = async (LikeId, userId) => {
       'DELETE FROM news_like WHERE n_id = ? AND u_id = ?',
       [LikeId, userId]
     );
-    console.log('model delete like news', rows);
     return true;
   } catch (e) {
     console.error('model delete like news', e.message);
@@ -274,7 +264,6 @@ const getNumberOfLikeByNewsId = async (newsId, next) => {
       'SELECT COUNT(like_id) as "like" FROM news_like WHERE n_id = ?',
       [newsId]
     );
-    console.log('Get by id result?', rows);
     return rows[0];
   } catch (e) {
     console.error('model get liked by id', e.message);
@@ -323,7 +312,6 @@ const insertNewsView = async (userId, newsId) => {
       `INSERT INTO news_view(user_id, news_id) VALUES (?,?)`,
       [userId, newsId]
     );
-    console.log('model insert favorite news', rows);
     return rows;
   } catch (e) {
     console.error('model insert favorite news', e.message);
