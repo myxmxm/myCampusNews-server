@@ -33,6 +33,7 @@ const news_list_get = async (req, res) => {
   if (news.length > 0) {
     res.json(news);
   } else {
+    res.json({ message: `News not found`, status: 409 });
     const err = httpError("News not found", 404);
   }
 };
